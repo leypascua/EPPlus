@@ -272,7 +272,8 @@ namespace OfficeOpenXml.Encryption
             {
 #if (!Core)
                 case eHashAlogorithm.RIPEMD160:
-                    return new HMACRIPEMD160(salt);
+                    //return new HMACRIPEMD160(salt);
+                    throw new NotSupportedException("Unsupported eHashAlgorithm: RIPEMD160");
 #endif                
                 case eHashAlogorithm.MD5:
                     return new HMACMD5(salt);              
@@ -654,7 +655,8 @@ namespace OfficeOpenXml.Encryption
                 case eHashAlogorithm.MD5:
                         return new MD5CryptoServiceProvider();
                 case eHashAlogorithm.RIPEMD160:
-                        return new RIPEMD160Managed();
+                    //return new RIPEMD160Managed();
+                    throw new NotSupportedException("Unsupported eHashAlgorithm: RIPEMD160");
                 case eHashAlogorithm.SHA1:
                         return new SHA1CryptoServiceProvider();
                 case eHashAlogorithm.SHA256:
