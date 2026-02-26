@@ -88,7 +88,7 @@ namespace OfficeOpenXml.VBA
                         {
                             //Add property values here...
                             case 0x20:
-                                Certificate = new X509Certificate2(value);
+                                Certificate = X509CertificateLoader.LoadCertificate(value);
                                 break;
                             default:
                                 break;

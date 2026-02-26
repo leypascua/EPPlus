@@ -20,12 +20,8 @@ namespace EPPlusTest
         {
             string path = Path.Combine(paths);
 
-            if (Directory.Exists(path))
-            {
-                Directory.Delete(path, true);
-            }
-
-            Directory.CreateDirectory(path);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
             return path;
         }

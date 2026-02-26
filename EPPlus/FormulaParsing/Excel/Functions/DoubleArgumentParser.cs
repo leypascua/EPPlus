@@ -29,7 +29,7 @@ using System.Text;
 using System.Globalization;
 using OfficeOpenXml.FormulaParsing.Utilities;
 using OfficeOpenXml.FormulaParsing.Exceptions;
-using util=OfficeOpenXml.Utils;
+using OUtil=OfficeOpenXml.Utils;
 
 namespace OfficeOpenXml.FormulaParsing.Excel.Functions
 {
@@ -44,7 +44,7 @@ namespace OfficeOpenXml.FormulaParsing.Excel.Functions
                 return r == null ? 0 : r.ValueDouble;
             }
             if (obj is double) return obj;
-            if (obj.IsNumeric()) return util.ConvertUtil.GetValueDouble(obj);
+            if (obj.IsNumeric()) return OUtil.ConvertUtil.GetValueDouble(obj);
             var str = obj != null ? obj.ToString() : string.Empty;
             try
             {
