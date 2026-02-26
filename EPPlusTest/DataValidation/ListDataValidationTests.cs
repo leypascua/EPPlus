@@ -43,10 +43,10 @@ namespace EPPlusTest.DataValidation
             Assert.AreEqual(1, _validation.Formula.Values.Count);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [TestMethod]
         public void ListDataValidation_ShouldThrowWhenNoFormulaOrValueIsSet()
         {
-            _validation.Validate();
+            Assert.Throws<InvalidOperationException>(() => _validation.Validate());
         }
     }
 }

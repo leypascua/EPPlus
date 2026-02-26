@@ -360,7 +360,7 @@ namespace EPPlusTest
                 Assert.AreEqual(r1.Bold, true);
 
                 ws = pck.Workbook.Worksheets["Pic URL"];
-                Assert.AreEqual(((ExcelPicture)ws.Drawings["Pic URI"]).Hyperlink, "http://epplus.codeplex.com");
+                Assert.AreEqual(((ExcelPicture)ws.Drawings["Pic URI"]).Hyperlink.ToString(), "http://epplus.codeplex.com");
 
                 Assert.AreEqual(pck.Workbook.Worksheets["Address"].GetValue<string>(40, 1), "\b\t");
 
@@ -1155,19 +1155,23 @@ namespace EPPlusTest
 
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestTableNameCanNotStartsWithNumber()
         {
-            var ws = _pck.Workbook.Worksheets.Add("Table");
-            var tbl = ws.Tables.Add(ws.Cells["A1"], "5TestTable");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var ws = _pck.Workbook.Worksheets.Add("Table");
+                var tbl = ws.Tables.Add(ws.Cells["A1"], "5TestTable");
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TestTableNameCanNotContainWhiteSpaces()
         {
-            var ws = _pck.Workbook.Worksheets.Add("Table");
-            var tbl = ws.Tables.Add(ws.Cells["A1"], "Test Table");
+            Assert.Throws<ArgumentException>(() =>
+            {
+                var ws = _pck.Workbook.Worksheets.Add("Table");
+                var tbl = ws.Tables.Add(ws.Cells["A1"], "Test Table");
+            });
         }
 
         [TestMethod]
@@ -2735,25 +2739,29 @@ namespace EPPlusTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void ExcelWorksheetRenameWithStartApostropheThrowsException()
         {
-            using (var package = new ExcelPackage())
+            Assert.Throws<ArgumentException>(() =>
             {
-                var sheet1 = package.Workbook.Worksheets.Add("Sheet1");
-                sheet1.Name = "'New Name";
-            }
+                using (var package = new ExcelPackage())
+                {
+                    var sheet1 = package.Workbook.Worksheets.Add("Sheet1");
+                    sheet1.Name = "'New Name";
+                }
+            });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void ExcelWorksheetRenameWithEndApostropheThrowsException()
         {
-            using (var package = new ExcelPackage())
+            Assert.Throws<ArgumentException>(() =>
             {
-                var sheet1 = package.Workbook.Worksheets.Add("Sheet1");
-                sheet1.Name = "New Name'";
-            }
+                using (var package = new ExcelPackage())
+                {
+                    var sheet1 = package.Workbook.Worksheets.Add("Sheet1");
+                    sheet1.Name = "New Name'";
+                }
+            });
         }
 
 #region Date1904 Test Cases
@@ -3008,12 +3016,7 @@ namespace EPPlusTest
         public void DateFunctionsWorkWithDifferentCultureDateFormats_US()
         {
             var currentCulture = CultureInfo.CurrentCulture;
-#if Core
             var us = CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
-#else
-            var us = CultureInfo.CreateSpecificCulture("en-US");
-            Thread.CurrentThread.CurrentCulture = us;
-#endif
             double usEoMonth = 0d, usEdate = 0d;
             var thread = new Thread(delegate ()
             {
@@ -3033,11 +3036,7 @@ namespace EPPlusTest
             thread.Join();
             Assert.AreEqual(41654.0, usEoMonth);
             Assert.AreEqual(41670.0, usEdate);
-#if Core
             CultureInfo.DefaultThreadCurrentCulture = currentCulture;
-#else
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-#endif
         }
 
         [TestMethod]
@@ -3045,12 +3044,7 @@ namespace EPPlusTest
         {
             var currentCulture = CultureInfo.CurrentCulture;
 
-#if Core
             var gb = CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-GB");
-#else
-            var gb = CultureInfo.CreateSpecificCulture("en-GB");
-            Thread.CurrentThread.CurrentCulture = gb;
-#endif
             double gbEoMonth = 0d, gbEdate = 0d;
             var thread = new Thread(delegate ()
             {
@@ -3069,11 +3063,7 @@ namespace EPPlusTest
             thread.Join();
             Assert.AreEqual(41654.0, gbEoMonth);
             Assert.AreEqual(41670.0, gbEdate);
-#if Core
             CultureInfo.DefaultThreadCurrentCulture = currentCulture;
-#else
-            Thread.CurrentThread.CurrentCulture = currentCulture;
-#endif
         }
         [TestMethod]
         public void Text()

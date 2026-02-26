@@ -1009,21 +1009,12 @@ namespace OfficeOpenXml
 			_worksheets = worksheets;
 		}
 
-#if Core
         /// <summary>
-        /// Returns the worksheet at the specified position. 
+        /// Returns the worksheet at the specified position.
         /// </summary>
         /// <param name="PositionID">The position of the worksheet. Collection is zero-based or one-base depending on the Package.Compatibility.IsWorksheets1Based propery. Default is Zero based</param>
         /// <seealso cref="ExcelPackage.Compatibility"/>
         /// <returns></returns>
-#else
-        /// <summary>
-        /// Returns the worksheet at the specified position. 
-        /// </summary>
-        /// <param name="PositionID">The position of the worksheet. Collection is zero-based or one-base depending on the Package.Compatibility.IsWorksheets1Based propery. Default is One based</param>
-        /// <seealso cref="ExcelPackage.Compatibility"/>
-        /// <returns></returns>
-#endif
         public ExcelWorksheet this[int PositionID]
 		{
 			get

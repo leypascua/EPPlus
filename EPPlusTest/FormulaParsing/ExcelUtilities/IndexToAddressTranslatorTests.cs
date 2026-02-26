@@ -28,10 +28,10 @@ namespace EPPlusTest.ExcelUtilities
             _indexToAddressTranslator = new IndexToAddressTranslator(_excelDataProvider, refType);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
         public void ShouldThrowIfExcelDataProviderIsNull()
         {
-            new IndexToAddressTranslator(null);
+            Assert.Throws<ArgumentNullException>(() => new IndexToAddressTranslator(null));
         }
 
         [TestMethod]

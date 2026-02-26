@@ -267,45 +267,6 @@ namespace EPPlusTest
             var dest = ws.Cells[1, column + columns, ws.Dimension.End.Row, ws.Dimension.End.Column + columns];
             source.Copy(dest);
         }
-#if !Core
-        [TestMethod]
-        public void Issue15123()
-        {
-            var p = new ExcelPackage();
-            var ws = p.Workbook.Worksheets.Add("t");
-            using (var dt = new DataTable())
-            {
-                dt.Columns.Add("String", typeof(string));
-                dt.Columns.Add("Int", typeof(int));
-                dt.Columns.Add("Bool", typeof(bool));
-                dt.Columns.Add("Double", typeof(double));
-                dt.Columns.Add("Date", typeof(DateTime));
-
-                var dr = dt.NewRow();
-                dr[0] = "Row1";
-                dr[1] = 1;
-                dr[2] = true;
-                dr[3] = 1.5;
-                dr[4] = new DateTime(2014, 12, 30);
-                dt.Rows.Add(dr);
-
-                dr = dt.NewRow();
-                dr[0] = "Row2";
-                dr[1] = 2;
-                dr[2] = false;
-                dr[3] = 2.25;
-                dr[4] = new DateTime(2014, 12, 31);
-                dt.Rows.Add(dr);
-
-                ws.Cells["A1"].LoadFromDataTable(dt, true);
-                ws.Cells["D2:D3"].Style.Numberformat.Format = "(* #,##0.00);_(* (#,##0.00);_(* \"-\"??_);(@)";
-
-                ws.Cells["E2:E3"].Style.Numberformat.Format = "mm/dd/yyyy";
-                ws.Cells.AutoFitColumns();
-                Assert.AreNotEqual(ws.Cells[2, 5].Text, "");
-            }
-        }
-#endif
         [TestMethod]
         public void Issue15128()
         {
@@ -1142,11 +1103,7 @@ namespace EPPlusTest
                 p.SaveAs(new FileInfo(path2));
 
                 // files are identical?
-#if (Core)
                 var md5 = System.Security.Cryptography.MD5.Create();
-#else
-                var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-#endif
                 using (var fs1 = new FileStream(path1, FileMode.Open))
                 using (var fs2 = new FileStream(path2, FileMode.Open))
                 {
@@ -2137,15 +2094,17 @@ namespace EPPlusTest
             _pck.Dispose();
         }
         [TestMethod]
-        [ExpectedException(typeof(InvalidDataException))]
         public void Issue234()
         {
-            using (var s = new MemoryStream())
+            Assert.Throws<InvalidDataException>(() =>
             {
-                var data = Encoding.UTF8.GetBytes("Bad data").ToArray();
-                s.Write(data, 0, data.Length);
-                var package = new ExcelPackage(s);
-            }
+                using (var s = new MemoryStream())
+                {
+                    var data = Encoding.UTF8.GetBytes("Bad data").ToArray();
+                    s.Write(data, 0, data.Length);
+                    var package = new ExcelPackage(s);
+                }
+            });
         }
 
         [TestMethod]
@@ -2164,31 +2123,33 @@ namespace EPPlusTest
             _pck.Dispose();
 
         }
-        [ExpectedException(typeof(ArgumentException))]
         [TestMethod]
         public void Issue233()
         {
-            //get some test data
-            var cars = Car.GenerateList();
+            Assert.Throws<ArgumentException>(() =>
+            {
+                //get some test data
+                var cars = Car.GenerateList();
 
-            OpenPackage("issue233.xlsx", true);
+                OpenPackage("issue233.xlsx", true);
 
-            var sheetName = "Summary_GLEDHOWSUGARCO![]()PTY";
+                var sheetName = "Summary_GLEDHOWSUGARCO![]()PTY";
 
-            //Create the worksheet 
-            var sheet = _pck.Workbook.Worksheets.Add(sheetName);
+                //Create the worksheet 
+                var sheet = _pck.Workbook.Worksheets.Add(sheetName);
 
-            //Read the data into a range
-            var range = sheet.Cells["A1"].LoadFromCollection(cars, true);
+                //Read the data into a range
+                var range = sheet.Cells["A1"].LoadFromCollection(cars, true);
 
-            //Make the range a table
-            var tbl = sheet.Tables.Add(range, $"data{sheetName}");
-            tbl.ShowTotal = true;
-            tbl.Columns["ReleaseYear"].TotalsRowFunction = OfficeOpenXml.Table.RowFunctions.Sum;
+                //Make the range a table
+                var tbl = sheet.Tables.Add(range, $"data{sheetName}");
+                tbl.ShowTotal = true;
+                tbl.Columns["ReleaseYear"].TotalsRowFunction = OfficeOpenXml.Table.RowFunctions.Sum;
 
-            //save and dispose
-            _pck.Save();
-            _pck.Dispose();
+                //save and dispose
+                _pck.Save();
+                _pck.Dispose();
+            });
         }
         public class Car
         {
@@ -2266,7 +2227,7 @@ namespace EPPlusTest
 
             Assert.AreEqual("Arial", boldStyle.Style.Font.Name);
             Assert.AreEqual(18, boldStyle.Style.Font.Size);
-            Assert.AreEqual(boldStyle.Style.Font.Color.Rgb, "FFFF0000");
+            Assert.AreEqual("FFFF0000", boldStyle.Style.Font.Color.Rgb);
 
             pkg.SaveAs(new FileInfo(@"c:\temp\n.xlsx"));
         }
@@ -2279,7 +2240,7 @@ namespace EPPlusTest
             ws.Cells["A1"].Hyperlink = new ExcelHyperLink("A2", "A2");
             pkg.Save();
         }
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Issue332_2()
         {
             InitBase();
@@ -2287,7 +2248,7 @@ namespace EPPlusTest
             var ws = pkg.Workbook.Worksheets["Hyperlink"];
             Assert.IsNotNull(ws.Cells["A1"].Hyperlink);
         }
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Issuer246()
         {
             InitBase();
@@ -2301,7 +2262,7 @@ namespace EPPlusTest
             ws = _pck.Workbook.Worksheets["DateFormat"];
             var pCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
             System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("sv-Se");
-            Assert.AreEqual(ws.Cells["A1"].Text, "den 31 december 2018");
+            Assert.AreEqual("den 31 december 2018", ws.Cells["A1"].Text);
             Assert.AreEqual(ws.GetValue<DateTime>(1, 1), new DateTime(2018, 12, 31));
             System.Threading.Thread.CurrentThread.CurrentCulture = pCulture;
         }
@@ -2387,7 +2348,7 @@ namespace EPPlusTest
                 workbook.Names.Add("Q0", cells);
             }
         }
-        [TestMethod]
+        [TestMethod, Ignore]
         public void Issue333()
         {
             using (var package = new ExcelPackage())

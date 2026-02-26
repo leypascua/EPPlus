@@ -11,9 +11,24 @@ namespace EPPlusTest
     {
         protected ExcelPackage _pck;
         protected string _clipartPath="";
-        protected string _worksheetPath= @"c:\epplusTest\Testoutput\";
-        protected string _testInputPath = @"c:\epplusTest\workbooks\";
+        protected string _worksheetPath = EnsurePath(Environment.CurrentDirectory, "var", "Testoutput");
+        protected string _testInputPath = EnsurePath(Environment.CurrentDirectory, "var", "workbooks"); 
+
         public TestContext TestContext { get; set; }
+
+        private static string EnsurePath(params string[] paths)
+        {
+            string path = Path.Combine(paths);
+
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+            }
+
+            Directory.CreateDirectory(path);
+
+            return path;
+        }
         
         [TestInitialize]
         public void InitBase()

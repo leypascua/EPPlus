@@ -88,12 +88,7 @@ namespace OfficeOpenXml
                 }
                 else
                 {
-#if (Core)
-                    var img=ImageCompat.GetImageAsByteArray(value);
-#else
-                    ImageConverter ic = new ImageConverter();
-                    byte[] img = (byte[])ic.ConvertTo(value, typeof(byte[]));
-#endif
+                    var img = ImageCompat.GetImageAsByteArray(value);
                     var ii = _workSheet.Workbook._package.AddImage(img);
                     var rel = _workSheet.Part.CreateRelationship(ii.Uri, Packaging.TargetMode.Internal, ExcelPackage.schemaRelationships + "/image");
                     SetXmlNodeString(BACKGROUNDPIC_PATH, rel.Id);
@@ -147,12 +142,7 @@ namespace OfficeOpenXml
             var relID = GetXmlNodeString(BACKGROUNDPIC_PATH);
             if (relID != "")
             {
-#if (Core)
-                var img=ImageCompat.GetImageAsByteArray(Image);
-#else
-                var ic = new ImageConverter();
-                byte[] img = (byte[])ic.ConvertTo(Image, typeof(byte[]));
-#endif
+                var img = ImageCompat.GetImageAsByteArray(Image);
                 var ii = _workSheet.Workbook._package.GetImageInfo(img);
 
                 //Delete the relation

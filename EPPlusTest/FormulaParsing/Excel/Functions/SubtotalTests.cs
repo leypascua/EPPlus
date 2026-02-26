@@ -25,12 +25,12 @@ namespace EPPlusTest.Excel.Functions
             _context.Scopes.NewScope(RangeAddress.Empty);
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void ShouldThrowIfInvalidFuncNumber()
         {
             var func = new Subtotal();
             var args = FunctionsHelper.CreateArgs(139, 1);
-            func.Execute(args, _context);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _context));
         }
 
         [TestMethod]

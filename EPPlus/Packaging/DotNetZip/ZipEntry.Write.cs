@@ -922,11 +922,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             //                 _BitField |= 0x0020;
 
             // set the UTF8 bit if necessary
-#if SILVERLIGHT
-            if (_actualEncoding.WebName == "utf-8")
-#else
             if (_actualEncoding.CodePage == System.Text.Encoding.UTF8.CodePage)
-#endif
                 _BitField |= 0x0800;
 
             // The PKZIP spec says that if bit 3 is set (0x0008) in the General
@@ -1202,11 +1198,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
 
                     if (_sourceStream == null)
                     {
-#if NETCF
-                        input.Close();
-#else
                         input.Dispose();
-#endif
                     }
                 }
                 _crcCalculated = true;
@@ -1421,11 +1413,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 }
                 else if ((input as FileStream) != null)
                 {
-#if NETCF
-                    input.Close();
-#else
                     input.Dispose();
-#endif
                 }
             }
 
@@ -1478,11 +1466,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             else if (this._Source == ZipEntrySource.FileSystem)
             {
                 // workitem 7145
-                FileShare fs = FileShare.ReadWrite;
-#if !NETCF
-                // FileShare.Delete is not defined for the Compact Framework
-                fs |= FileShare.Delete;
-#endif
+            FileShare fs = FileShare.ReadWrite | FileShare.Delete;
                 // workitem 8423
                 input = File.Open(LocalFileName, FileMode.Open, FileAccess.Read, fs);
                 fileLength = input.Length;
@@ -1512,19 +1496,15 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
 #if BZIP
             else if ((compressor as Ionic.BZip2.BZip2OutputStream) != null)
                 compressor.Close();
-#if !NETCF
             else if ((compressor as Ionic.BZip2.ParallelBZip2OutputStream) != null)
                 compressor.Close();
 #endif
-#endif
 
-#if !NETCF
             else if ((compressor as Ionic.Zlib.ParallelDeflateOutputStream) != null)
             {
                 compressor.Close();
                 compressor.Dispose();
             }
-#endif
 
             encryptor.Flush();
             encryptor.Close();
@@ -1944,7 +1924,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             if (_CompressionMethod == 0x08 && CompressionLevel != Ionic.Zlib.CompressionLevel.None)
             {
-#if !NETCF
                 // ParallelDeflateThreshold == 0    means ALWAYS use parallel deflate
                 // ParallelDeflateThreshold == -1L  means NEVER use parallel deflate
                 // Other values specify the actual threshold.
@@ -1990,7 +1969,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     o1.Reset(s);
                     return o1;
                 }
-#endif
                 var o = new DeflateStream(s, OfficeOpenXml.Packaging.Ionic.Zlib.CompressionMode.Compress,
                                                      CompressionLevel,
                                                      true);
@@ -2001,10 +1979,9 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             }
 
 
-#if BZIP
+ #if BZIP
             if (_CompressionMethod == 0x0c)
             {
-#if !NETCF
                 if (_container.ParallelDeflateThreshold == 0L ||
                     (streamLength > _container.ParallelDeflateThreshold &&
                      _container.ParallelDeflateThreshold > 0L))
@@ -2013,11 +1990,10 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     var o1 = new Ionic.BZip2.ParallelBZip2OutputStream(s, true);
                     return o1;
                 }
-#endif
                 var o = new Ionic.BZip2.BZip2OutputStream(s, true);
                 return o;
             }
-#endif
+ #endif
 
             return s;
         }
@@ -2573,14 +2549,10 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             lock (_outputLock)
             {
                 int tid = System.Threading.Thread.CurrentThread.GetHashCode();
-#if !(NETCF || SILVERLIGHT)
                 Console.ForegroundColor = (ConsoleColor)(tid % 8 + 8);
-#endif
                 Console.Write("{0:000} ZipEntry.Write ", tid);
                 Console.WriteLine(format, varParams);
-#if !(NETCF || SILVERLIGHT)
                 Console.ResetColor();
-#endif
             }
         }
 

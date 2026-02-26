@@ -654,14 +654,8 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             // workitem 7881
             // reset ReadOnly bit if necessary
-#if NETCF
-            if ( (NetCfFile.GetAttributes(fileName) & (uint)FileAttributes.ReadOnly) == (uint)FileAttributes.ReadOnly)
-                NetCfFile.SetAttributes(fileName, (uint)FileAttributes.Normal);
-#elif SILVERLIGHT
-#else
             if ((File.GetAttributes(fileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 File.SetAttributes(fileName, FileAttributes.Normal);
-#endif
             File.Delete(fileName);
         }
 
@@ -841,12 +835,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                         }
                     }
 
-#if NETCF
-                    // workitem 7926 - version made by OS can be zero or 10
-                    if ((_VersionMadeBy & 0xFF00) == 0x0a00 || (_VersionMadeBy & 0xFF00) == 0x0000)
-                        NetCfFile.SetAttributes(targetFileName, (uint)_ExternalFileAttrs);
-
-#else
                     // workitem 7071
                     //
                     // We can only apply attributes if they are relevant to the NTFS
@@ -857,7 +845,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     // (NTFS)
                     if ((_VersionMadeBy & 0xFF00) == 0x0a00 || (_VersionMadeBy & 0xFF00) == 0x0000)
                         File.SetAttributes(targetFileName, (FileAttributes)_ExternalFileAttrs);
-#endif
                 }
 
                 OnAfterExtract(baseDir);
@@ -1075,12 +1062,8 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 var zss = input as ZipSegmentedStream;
                 if (zss != null)
                 {
-#if NETCF
-                    zss.Close();
-#else
                     // need to dispose it
                     zss.Dispose();
-#endif
                     _archiveStream = null;
                 }
             }
@@ -1133,9 +1116,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
 
         internal void _SetTimes(string fileOrDirectory, bool isFile)
         {
-#if SILVERLIGHT
-                    // punt on setting file times
-#else
             // workitem 8807:
             // Because setting the time is not considered to be a fatal error,
             // and because other applications can interfere with the setting
@@ -1146,15 +1126,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             {
                 if (_ntfsTimesAreSet)
                 {
-#if NETCF
-                    // workitem 7944: set time should not be a fatal error on CF
-                    int rc = NetCfFile.SetTimes(fileOrDirectory, _Ctime, _Atime, _Mtime);
-                    if ( rc != 0)
-                    {
-                        WriteStatus("Warning: SetTimes failed.  entry({0})  file({1})  rc({2})",
-                                    FileName, fileOrDirectory, rc);
-                    }
-#else
                     if (isFile)
                     {
                         // It's possible that the extract was cancelled, in which case,
@@ -1177,34 +1148,22 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                             Directory.SetLastWriteTimeUtc(fileOrDirectory, _Mtime);
                         }
                     }
-#endif
                 }
                 else
                 {
                     // workitem 6191
                     DateTime AdjustedLastModified = Ionic.Zip.SharedUtilities.AdjustTime_Reverse(LastModified);
 
-#if NETCF
-                    int rc = NetCfFile.SetLastWriteTime(fileOrDirectory, AdjustedLastModified);
-
-                    if ( rc != 0)
-                    {
-                        WriteStatus("Warning: SetLastWriteTime failed.  entry({0})  file({1})  rc({2})",
-                                    FileName, fileOrDirectory, rc);
-                    }
-#else
                     if (isFile)
                         File.SetLastWriteTime(fileOrDirectory, AdjustedLastModified);
                     else
                         Directory.SetLastWriteTime(fileOrDirectory, AdjustedLastModified);
-#endif
                 }
             }
             catch (System.IO.IOException ioexc1)
             {
                 WriteStatus("failed to set time on {0}: {1}", fileOrDirectory, ioexc1.Message);
             }
-#endif
         }
 
 

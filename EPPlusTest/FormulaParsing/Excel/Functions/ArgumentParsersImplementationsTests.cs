@@ -10,11 +10,11 @@ namespace EPPlusTest.Excel.Functions
     [TestClass]
     public class ArgumentParsersImplementationsTests
     {
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
         public void IntParserShouldThrowIfArgumentIsNull()
         {
             var parser = new IntArgumentParser();
-            parser.Parse(null);
+            Assert.Throws<ArgumentNullException>(() => parser.Parse(null));
         }
 
         [TestMethod]
@@ -89,11 +89,11 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(3d, result);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
         public void DoubleParserShouldThrowIfArgumentIsNull()
         {
             var parser = new DoubleArgumentParser();
-            parser.Parse(null);
+            Assert.Throws<ArgumentNullException>(() => parser.Parse(null));
         }
 
         [TestMethod]

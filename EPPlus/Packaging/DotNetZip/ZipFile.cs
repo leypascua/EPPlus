@@ -124,7 +124,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
     /// </remarks>
 //    [Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d00005")]
 //    [Interop.ComVisible(true)]
-//#if !NETCF
 //    [Interop.ClassInterface(Interop.ClassInterfaceType.AutoDispatch)]
 //#endif
     internal partial class ZipFile :
@@ -2132,7 +2131,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         }
 
 
-#if !NETCF
         /// <summary>
         ///   The size threshold for an entry, above which a parallel deflate is used.
         /// </summary>
@@ -2294,7 +2292,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 _maxBufferPairs = value;
             }
         }
-#endif
 
 
         /// <summary>Provides a string representation of the instance.</summary>
@@ -2841,9 +2838,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             _contentsChanged = true;
             AddDirectoryWillTraverseReparsePoints = true;  // workitem 8617
             CompressionLevel = OfficeOpenXml.Packaging.Ionic.Zlib.CompressionLevel.Default;
-#if !NETCF
             ParallelDeflateThreshold = 512 * 1024;
-#endif
             // workitem 7685, 9868
             _initEntriesDictionary();
 
@@ -3506,11 +3501,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                         if (_readstream != null)
                         {
                             // workitem 7704
-#if NETCF
-                            _readstream.Close();
-#else
                             _readstream.Dispose();
-#endif
                             _readstream = null;
                         }
                     }
@@ -3519,22 +3510,16 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                         if (_writestream != null)
                         {
                             // workitem 7704
-#if NETCF
-                            _writestream.Close();
-#else
                             _writestream.Dispose();
-#endif
                             _writestream = null;
                         }
 
-#if !NETCF
                     // workitem 10030
                     if (this.ParallelDeflater != null)
                     {
                         this.ParallelDeflater.Dispose();
                         this.ParallelDeflater = null;
                     }
-#endif
                 }
                 this._disposed = true;
             }
@@ -3633,25 +3618,15 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         private Int64 _OffsetOfCentralDirectory64;
         private Nullable<bool> _OutputUsesZip64;
         internal bool _inExtractAll;
-#if (Core)
-        private System.Text.Encoding _alternateEncoding = System.Text.Encoding.GetEncoding("UTF-8"); 
-#else
-        private System.Text.Encoding _alternateEncoding = System.Text.Encoding.GetEncoding("IBM437"); 
-#endif
+        private System.Text.Encoding _alternateEncoding = System.Text.Encoding.GetEncoding("UTF-8");
         private ZipOption _alternateEncodingUsage = ZipOption.Never;
-#if (Core)
         private static System.Text.Encoding _defaultEncoding = System.Text.Encoding.GetEncoding("UTF-8");
-#else
-        private static System.Text.Encoding _defaultEncoding = System.Text.Encoding.GetEncoding("IBM437");
-#endif
 
         private int _BufferSize = BufferSizeDefault;
 
-#if !NETCF
         internal Ionic.Zlib.ParallelDeflateOutputStream ParallelDeflater;
         private long _ParallelDeflateThreshold;
         private int _maxBufferPairs = 16;
-#endif
 
         internal Zip64Option _zip64 = Zip64Option.Default;
 #pragma warning disable 649

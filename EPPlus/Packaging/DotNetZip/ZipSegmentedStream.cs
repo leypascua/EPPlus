@@ -249,11 +249,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             if (_innerStream != null)
             {
-#if NETCF
-                _innerStream.Close();
-#else
                 _innerStream.Dispose();
-#endif
             }
 
             if (CurrentSegment + 1 == _maxDiskNumber)
@@ -312,11 +308,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             if (_innerStream != null)
             {
-#if NETCF
-                _innerStream.Close();
-#else
                 _innerStream.Dispose();
-#endif
                 if (File.Exists(CurrentName))
                     File.Delete(CurrentName);
                 File.Move(_currentTempName, CurrentName);
@@ -405,11 +397,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             // First, close the current segment, and then remove it.
             if (_innerStream != null)
             {
-#if NETCF
-                _innerStream.Close();
-#else
                 _innerStream.Dispose();
-#endif
                 if (File.Exists(_currentTempName))
                     File.Delete(_currentTempName);
             }
@@ -536,11 +524,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             {
                 if (_innerStream != null)
                 {
-#if NETCF
-                    _innerStream.Close();
-#else
                     _innerStream.Dispose();
-#endif
                     //_innerStream = null;
                     if (rwMode == RwMode.Write)
                     {

@@ -10,10 +10,10 @@ namespace EPPlusTest.Utils
     [TestClass]
     public class SqRefUtilityTests
     {
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
         public void SqRefUtility_ToSqRefAddress_ShouldThrowIfAddressIsNullOrEmpty()
         {
-            SqRefUtility.ToSqRefAddress(null);
+            Assert.Throws<ArgumentNullException>(() => SqRefUtility.ToSqRefAddress(null));
         }
 
         [TestMethod]

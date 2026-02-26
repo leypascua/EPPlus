@@ -43,11 +43,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 throw new System.IO.FileNotFoundException(fileName);
 
             long fileLength = 0L;
-            FileShare fs = FileShare.ReadWrite;
-#if !NETCF
-            // FileShare.Delete is not defined for the Compact Framework
-            fs |= FileShare.Delete;
-#endif
+            FileShare fs = FileShare.ReadWrite | FileShare.Delete;
             using (var s = File.Open(fileName, FileMode.Open, FileAccess.Read, fs))
             {
                 fileLength = s.Length;
@@ -56,7 +52,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         }
 
 
-        [System.Diagnostics.Conditional("NETCF")]
         public static void Workaround_Ladybug318918(Stream s)
         {
             // This is a workaround for this issue:
@@ -158,11 +153,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         }
 
 
-#if (Core)
-        static System.Text.Encoding ibm437 = System.Text.Encoding.GetEncoding("UTF-8");   
-#else
-        static System.Text.Encoding ibm437 = System.Text.Encoding.GetEncoding("IBM437");
-#endif
+        static System.Text.Encoding ibm437 = System.Text.Encoding.GetEncoding("UTF-8");
         static System.Text.Encoding utf8 = System.Text.Encoding.GetEncoding("UTF-8");
 
         internal static byte[] StringToByteArray(string value, System.Text.Encoding encoding)
@@ -255,29 +246,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             int n = 0;
             byte[] block = new byte[4];
-#if NETCF
-            // workitem 9181
-            // Reading here in NETCF sometimes reads "backwards". Seems to happen for
-            // larger files.  Not sure why. Maybe an error in caching.  If the data is:
-            //
-            // 00100210: 9efa 0f00 7072 6f6a 6563 742e 6963 7750  ....project.icwP
-            // 00100220: 4b05 0600 0000 0006 0006 0091 0100 008e  K...............
-            // 00100230: 0010 0000 00                             .....
-            //
-            // ...and the stream Position is 10021F, then a Read of 4 bytes is returning
-            // 50776369, instead of 06054b50. This seems to happen the 2nd time Read()
-            // is called from that Position..
-            //
-            // submitted to connect.microsoft.com
-            // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=318918#tabs
-            //
-            for (int i = 0; i < block.Length; i++)
-            {
-                n+= s.Read(block, i, 1);
-            }
-#else
             n = s.Read(block, 0, block.Length);
-#endif
             if (n != block.Length) throw new BadReadException(String.Format(message, s.Position));
             int data = unchecked((((block[3] * 256 + block[2]) * 256) + block[1]) * 256 + block[0]);
             return data;
@@ -547,39 +516,10 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             throw new IOException();
         }
 
-#if NETCF || SILVERLIGHT
-        public static string InternalGetTempFileName()
-        {
-            return "DotNetZip-" + GenerateRandomStringImpl(8,0) + ".tmp";
-        }
-
-        internal static string GenerateRandomStringImpl(int length, int delta)
-        {
-            bool WantMixedCase = (delta == 0);
-            System.Random rnd = new System.Random();
-
-            string result = "";
-            char[] a = new char[length];
-
-            for (int i = 0; i < length; i++)
-            {
-               // delta == 65 means uppercase
-               // delta == 97 means lowercase
-                if (WantMixedCase)
-                    delta = (rnd.Next(2) == 0) ? 65 : 97;
-                a[i] = (char)(rnd.Next(26) + delta);
-            }
-
-            result = new System.String(a);
-            return result;
-        }
-#else
         public static string InternalGetTempFileName()
         {
             return "DotNetZip-" + Path.GetRandomFileName().Substring(0, 8) + ".tmp";
         }
-
-#endif
 
 
         /// <summary>
@@ -593,7 +533,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             int n = 0;
             bool done = false;
-//#if !NETCF && !SILVERLIGHT
 //            int retries = 0;
 //#endif
             do
@@ -603,12 +542,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     n = s.Read(buffer, offset, count);
                     done = true;
                 }
-#if NETCF || SILVERLIGHT
-                catch (System.IO.IOException)
-                {
-                    throw;
-                }
-#else
                 catch /*(System.IO.IOException ioexc1)*/
                 {
                     // Check if we can call GetHRForException,
@@ -635,7 +568,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                         throw;
                     //}
                 }
-#endif
             }
             while (!done);
 
@@ -643,7 +575,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         }
 
 
-#if !NETCF
         // workitem 8009
         //
         // This method must remain separate.
@@ -662,7 +593,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         // JIT-compiles this method when UnmanagedCode is disallowed, and thus never
         // generates the JIT-compile time exception.
         //
-#endif
         private static uint _HRForException(System.Exception ex1)
         {
             return unchecked((uint)System.Runtime.InteropServices.Marshal.GetHRForException(ex1));

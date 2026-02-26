@@ -1136,17 +1136,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         /// </example>
         public ZipEntry AddEntry(string entryName, string content)
         {
-#if SILVERLIGHT
             return AddEntry(entryName, content, System.Text.Encoding.UTF8);
-#else
-            return AddEntry(entryName, content,
-#if Core
-                System.Text.Encoding.GetEncoding("UTF-8")
-#else
-                System.Text.Encoding.Default
-#endif
-                );
-#endif
         }
 
 
@@ -1667,17 +1657,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         ///
         public ZipEntry UpdateEntry(string entryName, string content)
         {
-#if SILVERLIGHT
             return UpdateEntry(entryName, content, System.Text.Encoding.UTF8);
-#else
-            return UpdateEntry(entryName, content,
-#if Core
-                System.Text.Encoding.GetEncoding("UTF-8")
-#else
-                System.Text.Encoding.Default
-#endif
-                );
-#endif
         }
 
 
@@ -2164,16 +2144,9 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                         foreach (String dir in dirnames)
                         {
                             // workitem 8617: Optionally traverse reparse points
-#if SILVERLIGHT
-#elif NETCF
-                            FileAttributes fileAttrs = (FileAttributes) NetCfFile.GetAttributes(dir);
-#else
                             FileAttributes fileAttrs = System.IO.File.GetAttributes(dir);
-#endif
                             if (this.AddDirectoryWillTraverseReparsePoints
-#if !SILVERLIGHT
                                 || ((fileAttrs & FileAttributes.ReparsePoint) == 0)
-#endif
                                 )
                                 AddOrUpdateDirectoryImpl(dir, rootDirectoryPathInArchive, action, recurse, level + 1);
 

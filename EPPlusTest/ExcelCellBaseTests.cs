@@ -60,31 +60,31 @@ namespace EPPlusTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFormulaSheetReferencesNullOldSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", null, "sheet2");
+          Assert.Throws<ArgumentNullException>(() =>
+            ExcelCellBase.UpdateFormulaSheetReferences("formula", null, "sheet2"));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFormulaSheetReferencesEmptyOldSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", string.Empty, "sheet2");
+          Assert.Throws<ArgumentNullException>(() =>
+            ExcelCellBase.UpdateFormulaSheetReferences("formula", string.Empty, "sheet2"));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFormulaSheetReferencesNullNewSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", null);
+          Assert.Throws<ArgumentNullException>(() =>
+            ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", null));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void UpdateFormulaSheetReferencesEmptyNewSheetThrowsException()
         {
-          ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", string.Empty);
+          Assert.Throws<ArgumentNullException>(() =>
+            ExcelCellBase.UpdateFormulaSheetReferences("formula", "sheet1", string.Empty));
         }
         #endregion
   }

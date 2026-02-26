@@ -138,14 +138,12 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(expectedValue, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [TestMethod]
         public void CeilingShouldThrowExceptionIfNumberIsPositiveAndSignificanceIsNegative()
         {
-            var expectedValue = 30d;
             var func = new Ceiling();
             var args = FunctionsHelper.CreateArgs(22.35d, -1);
-            var result = func.Execute(args, _parsingContext);
-            Assert.AreEqual(expectedValue, result.Result);
+            Assert.Throws<InvalidOperationException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]
@@ -390,12 +388,12 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(expectedResult, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void AverageAShouldThrowValueExceptionIfNonNumericTextIsSupplied()
         {
             var func = new AverageA();
             var args = FunctionsHelper.CreateArgs(4d, 2d, 5d, 2d, "ABC");
-            var result = func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]
@@ -931,12 +929,12 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(120d, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof (ExcelErrorValueException))]
+        [TestMethod]
         public void FactShouldThrowWhenNegativeNumber()
         {
             var func = new Fact();
             var args = FunctionsHelper.CreateArgs(-1);
-            func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]
@@ -948,12 +946,12 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(2, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void QuotientShouldThrowWhenDenomIs0()
         {
             var func = new Quotient();
             var args = FunctionsHelper.CreateArgs(1, 0);
-            func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]
@@ -974,12 +972,12 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(3d, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void LargeShouldThrowIfIndexOutOfBounds()
         {
             var func = new Large();
             var args = FunctionsHelper.CreateArgs(FunctionsHelper.CreateArgs(4, 1, 2, 3), 6);
-            var result = func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]
@@ -1000,20 +998,20 @@ namespace EPPlusTest.Excel.Functions
             Assert.AreEqual(2d, result.Result);
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void SmallShouldThrowIfIndexOutOfBounds()
         {
             var func = new Small();
             var args = FunctionsHelper.CreateArgs(FunctionsHelper.CreateArgs(4, 1, 2, 3), 6);
-            var result = func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
-        [TestMethod, ExpectedException(typeof(ExcelErrorValueException))]
+        [TestMethod]
         public void MedianShouldThrowIfNoArgs()
         {
             var func = new Median();
             var args = FunctionsHelper.Empty();
-            func.Execute(args, _parsingContext);
+            Assert.Throws<ExcelErrorValueException>(() => func.Execute(args, _parsingContext));
         }
 
         [TestMethod]

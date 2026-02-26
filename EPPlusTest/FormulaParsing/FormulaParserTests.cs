@@ -99,10 +99,10 @@ namespace EPPlusTest.FormulaParsing
             Assert.AreEqual(3d, result);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
         public void ParseAtShouldThrowIfAddressIsNull()
         {
-            _parser.ParseAt(null);
+            Assert.Throws<ArgumentException>(() => _parser.ParseAt(null));
         }
     }
 }

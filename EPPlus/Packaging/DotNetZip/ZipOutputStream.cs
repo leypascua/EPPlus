@@ -354,9 +354,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             _leaveUnderlyingStreamOpen = leaveOpen;
             Strategy = Ionic.Zlib.CompressionStrategy.Default;
             _name = name ?? "(stream)";
-#if !NETCF
             ParallelDeflateThreshold = -1L;
-#endif
         }
 
 
@@ -1022,16 +1020,11 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         {
             get
             {
-                #if Core
-                    return System.Text.Encoding.GetEncoding("utf-8");     
-                #else
-                                return System.Text.Encoding.GetEncoding("IBM437");
-                #endif
+                return System.Text.Encoding.GetEncoding("utf-8");
             }
         }
 
 
-#if !NETCF
         /// <summary>
         ///   The size threshold for an entry, above which a parallel deflate is used.
         /// </summary>
@@ -1196,7 +1189,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 _maxBufferPairs = value;
             }
         }
-#endif
 
 
         private void InsureUniqueEntry(ZipEntry ze1)
@@ -1514,11 +1506,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     if (cs != null)
                     {
                         wrappedStream = cs.WrappedStream;
-#if NETCF
-                    cs.Close();
-#else
                         cs.Dispose();
-#endif
                     }
                     else
                     {
@@ -1527,11 +1515,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
 
                     if (!_leaveUnderlyingStreamOpen)
                     {
-#if NETCF
-                    wrappedStream.Close();
-#else
                         wrappedStream.Dispose();
-#endif
                     }
                     _outputStream = null;
                 }
@@ -1619,13 +1603,8 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         private Dictionary<String, ZipEntry> _entriesWritten;
         private int _entryCount;
         private ZipOption _alternateEncodingUsage = ZipOption.Never;
-#if (Core)
         private System.Text.Encoding _alternateEncoding
-            = System.Text.Encoding.GetEncoding("utf-8"); // 
-#else
-        private System.Text.Encoding _alternateEncoding
-            = System.Text.Encoding.GetEncoding("IBM437"); // default = IBM437
-#endif
+            = System.Text.Encoding.GetEncoding("utf-8");
 
         private bool _leaveUnderlyingStreamOpen;
         private bool _disposed;
@@ -1638,11 +1617,9 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         private bool _needToWriteEntryHeader;
         private string _name;
         private bool _DontIgnoreCase;
-#if !NETCF
         internal ParallelDeflateOutputStream ParallelDeflater;
         private long _ParallelDeflateThreshold;
         private int _maxBufferPairs = 16;
-#endif
 
         // **Note regarding exceptions:
 
@@ -1724,7 +1701,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             }
         }
 
-#if !NETCF
         public Ionic.Zlib.ParallelDeflateOutputStream ParallelDeflater
         {
             get
@@ -1756,7 +1732,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 return _zos.ParallelDeflateMaxBufferPairs;
             }
         }
-#endif
 
         public int CodecBufferSize
         {

@@ -1310,7 +1310,6 @@ namespace OfficeOpenXml.Packaging.Ionic
         }
     }
 
-#if !SILVERLIGHT
     internal partial class AttributesCriterion : SelectionCriterion
     {
         internal override bool Evaluate(ZipEntry entry)
@@ -1319,7 +1318,6 @@ namespace OfficeOpenXml.Packaging.Ionic
             return _Evaluate(fileAttrs);
         }
     }
-#endif
 
     internal partial class CompoundCriterion : SelectionCriterion
     {

@@ -42,11 +42,11 @@ namespace EPPlusTest
 			workbook.Worksheets.Delete("NEW2");
         }
 
-		[TestMethod, ExpectedException(typeof(ArgumentException))]
+		[TestMethod]
 		public void DeleteByNameWhereWorkSheetDoesNotExist()
 		{
 			workbook.Worksheets.Add("NEW2");
-			workbook.Worksheets.Delete("NEW3");
+			Assert.Throws<ArgumentException>(() => workbook.Worksheets.Delete("NEW3"));
 		}
 
 		[TestMethod]
@@ -177,7 +177,6 @@ namespace EPPlusTest
         }
 
         [TestMethod, Ignore]
-        [ExpectedException(typeof(ArgumentException))]
         public void DeleteColumnBeforeRangeMimitThrowsArgumentException()
         {
             // Arrange
@@ -191,15 +190,11 @@ namespace EPPlusTest
             var wsData = pck.Workbook.Worksheets[1];
 
             // Act
-            wsData.DeleteColumn(0);
-
-            // Assert
-            Assert.Fail();
+            Assert.Throws<ArgumentException>(() => wsData.DeleteColumn(0));
 
         }
 
         [TestMethod, Ignore]
-        [ExpectedException(typeof(ArgumentException))]
         public void DeleteColumnAfterRangeLimitThrowsArgumentException()
         {
             // Arrange
@@ -213,10 +208,7 @@ namespace EPPlusTest
             var wsData = pck.Workbook.Worksheets[1];
 
             // Act
-            wsData.DeleteColumn(16385);
-
-            // Assert
-            Assert.Fail();
+            Assert.Throws<ArgumentException>(() => wsData.DeleteColumn(16385));
 
         }
 

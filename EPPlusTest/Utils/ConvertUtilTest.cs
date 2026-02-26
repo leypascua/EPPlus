@@ -124,31 +124,27 @@ namespace EPPlusTest.Utils
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void EmptyStringToDecimal()
         {
-            ConvertUtil.GetTypedCellValue<decimal>("");
+            Assert.Throws<FormatException>(() => ConvertUtil.GetTypedCellValue<decimal>(""));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void FloatingPointStringToInt()
         {
-            ConvertUtil.GetTypedCellValue<int>("1.4");
+            Assert.Throws<FormatException>(() => ConvertUtil.GetTypedCellValue<int>("1.4"));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidCastException))]
         public void IntToDateTime()
         {
-            ConvertUtil.GetTypedCellValue<DateTime>(122);
+            Assert.Throws<InvalidCastException>(() => ConvertUtil.GetTypedCellValue<DateTime>(122));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidCastException))]
         public void IntToTimeSpan()
         {
-            ConvertUtil.GetTypedCellValue<TimeSpan>(122);
+            Assert.Throws<InvalidCastException>(() => ConvertUtil.GetTypedCellValue<TimeSpan>(122));
         }
 
         [TestMethod]
@@ -179,10 +175,9 @@ namespace EPPlusTest.Utils
         }
 
         [TestMethod]
-        [ExpectedException(typeof(FormatException))]
         public void BadTextToInt()
         {
-            ConvertUtil.GetTypedCellValue<int>("text1");
+            Assert.Throws<FormatException>(() => ConvertUtil.GetTypedCellValue<int>("text1"));
         }
 
         // previous implementation

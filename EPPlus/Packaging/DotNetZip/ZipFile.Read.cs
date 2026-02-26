@@ -648,11 +648,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                 {
                     try
                     {
-#if NETCF
-                        zf._readstream.Close();
-#else
                         zf._readstream.Dispose();
-#endif
                         zf._readstream = null;
                     }
                     finally { }

@@ -55,9 +55,6 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-#if SILVERLIGHT
-using System.Linq;
-#endif
 
 namespace OfficeOpenXml.Packaging.Ionic
 {
@@ -350,7 +347,6 @@ namespace OfficeOpenXml.Packaging.Ionic
     }
 
 
-#if !SILVERLIGHT
     internal partial class AttributesCriterion : SelectionCriterion
     {
         private FileAttributes _Attributes;
@@ -455,11 +451,7 @@ namespace OfficeOpenXml.Packaging.Ionic
                 // the operator is NotEqualTo.
                 return (Operator != ComparisonOperator.EqualTo);
             }
-#if NETCF
-            FileAttributes fileAttrs = NetCfFile.GetAttributes(filename);
-#else
             FileAttributes fileAttrs = System.IO.File.GetAttributes(filename);
-#endif
 
             return _Evaluate(fileAttrs);
         }
@@ -484,7 +476,6 @@ namespace OfficeOpenXml.Packaging.Ionic
             return result;
         }
     }
-#endif
 
 
     internal partial class CompoundCriterion : SelectionCriterion
@@ -1176,10 +1167,8 @@ namespace OfficeOpenXml.Packaging.Ionic
                         }
                         break;
 
-#if !SILVERLIGHT
                     case "attrs":
                     case "attributes":
-#endif
                     case "type":
                         {
                             if (tokens.Length <= i + 2)
@@ -1191,13 +1180,6 @@ namespace OfficeOpenXml.Packaging.Ionic
                             if (c != ComparisonOperator.NotEqualTo && c != ComparisonOperator.EqualTo)
                                 throw new ArgumentException(String.Join(" ", tokens, i, tokens.Length - i));
 
-#if SILVERLIGHT
-                            current = (SelectionCriterion) new TypeCriterion
-                                    {
-                                        AttributeString = tokens[i + 2],
-                                        Operator = c
-                                    };
-#else
                             current = (tok1 == "type")
                                 ? (SelectionCriterion) new TypeCriterion
                                     {
@@ -1209,7 +1191,6 @@ namespace OfficeOpenXml.Packaging.Ionic
                                         AttributeString = tokens[i + 2],
                                         Operator = c
                                     };
-#endif
                             i += 2;
                             stateStack.Push(ParseState.CriterionDone);
                         }
@@ -1358,9 +1339,7 @@ namespace OfficeOpenXml.Packaging.Ionic
                         foreach (String dir in dirnames)
                         {
                             if (this.TraverseReparsePoints
-#if !SILVERLIGHT
                                 || ((File.GetAttributes(dir) & FileAttributes.ReparsePoint) == 0)
-#endif
                                 )
                             {
                                 // workitem 10191
@@ -1424,32 +1403,6 @@ namespace OfficeOpenXml.Packaging.Ionic
         }
 
 
-#if SILVERLIGHT
-       public static System.Enum[] GetEnumValues(Type type)
-        {
-            if (!type.IsEnum)
-                throw new ArgumentException("not an enum");
-
-            return (
-              from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
-              where field.IsLiteral
-              select (System.Enum)field.GetValue(null)
-            ).ToArray();
-        }
-
-        public static string[] GetEnumStrings<T>()
-        {
-            var type = typeof(T);
-            if (!type.IsEnum)
-                throw new ArgumentException("not an enum");
-
-            return (
-              from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
-              where field.IsLiteral
-              select field.Name
-            ).ToArray();
-        }
-#endif
 
         /// <summary>
         ///   Converts the string representation of the name or numeric value of one
@@ -1469,11 +1422,7 @@ namespace OfficeOpenXml.Packaging.Ionic
             if (ignoreCase)
                 stringRepresentation = stringRepresentation.ToLower(CultureInfo.InvariantCulture);
 
-#if SILVERLIGHT
-            foreach (System.Enum enumVal in GetEnumValues(enumType))
-#else
             foreach (System.Enum enumVal in System.Enum.GetValues(enumType))
-#endif
             {
                 string description = GetDescription(enumVal);
                 if (ignoreCase)

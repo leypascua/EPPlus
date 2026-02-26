@@ -57,10 +57,10 @@ namespace EPPlusTest
             Assert.IsTrue(result);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
         public void EvaluateShouldThrowIfOperatorIsNotBoolean()
         {
-            var result = _evaluator.Evaluate(1d, "+1");
+            Assert.Throws<ArgumentException>(() => _evaluator.Evaluate(1d, "+1"));
         }
         #endregion
 
@@ -68,9 +68,6 @@ namespace EPPlusTest
         [TestMethod]
         public void EvaluateShouldHandleDateArg()
         {
-            #if (!Core)
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            #endif
             var result = _evaluator.Evaluate(new DateTime(2016,6,28), "2016-06-28");
             Assert.IsTrue(result);
         }
@@ -78,9 +75,6 @@ namespace EPPlusTest
         [TestMethod]
         public void EvaluateShouldHandleDateArgWithOperator()
         {
-#if (!Core)
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-#endif
             var result = _evaluator.Evaluate(new DateTime(2016, 6, 28), ">2016-06-27");
             Assert.IsTrue(result);
         }

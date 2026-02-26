@@ -63,12 +63,7 @@ namespace OfficeOpenXml.Drawing
                 ContentType = GetContentType(f.Extension);
                 _image = Image.FromStream(Part.GetStream());
 
-#if (Core)
-                byte[] iby = ImageCompat.GetImageAsByteArray(_image);
-#else
-                ImageConverter ic =new ImageConverter();
-                var iby=(byte[])ic.ConvertTo(_image, typeof(byte[]));
-#endif
+                var iby = ImageCompat.GetImageAsByteArray(_image);
                 var ii = _drawings._package.LoadImage(iby, UriPic, Part);
                 ImageHash = ii.Hash;
 
@@ -128,12 +123,7 @@ namespace OfficeOpenXml.Drawing
             var imagestream = new FileStream(imageFile.FullName, FileMode.Open, FileAccess.Read);
             _image = Image.FromStream(imagestream);
 
-#if (Core)
-            var img=ImageCompat.GetImageAsByteArray(_image);
-#else
-            ImageConverter ic = new ImageConverter();
-            var img = (byte[])ic.ConvertTo(_image, typeof(byte[]));
-#endif
+            var img = ImageCompat.GetImageAsByteArray(_image);
 
             imagestream.Close();
             UriPic = GetNewUri(package, "/xl/media/{0}" + imageFile.Name);
@@ -228,12 +218,7 @@ namespace OfficeOpenXml.Drawing
         #endregion
         private string SavePicture(Image image)
         {
-#if (Core)
-            byte[] img = ImageCompat.GetImageAsByteArray(image);
-#else
-            ImageConverter ic = new ImageConverter();
-            byte[] img = (byte[])ic.ConvertTo(image, typeof(byte[]));
-#endif
+            var img = ImageCompat.GetImageAsByteArray(image);
             var ii = _drawings._package.AddImage(img);
             
 

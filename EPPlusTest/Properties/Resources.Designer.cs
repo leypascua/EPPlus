@@ -43,11 +43,7 @@ namespace EPPlusTest.Properties {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EPPlusTest.Properties.Resources", 
-#if Core 
                         typeof(Resources).GetTypeInfo().Assembly);
-#else
-                        typeof(Resources).Assembly);
-#endif
 
                     resourceMan = temp;
                 }
@@ -74,16 +70,12 @@ namespace EPPlusTest.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap Test1 {
             get {
-#if (Core)                
                 string path = AppContext.BaseDirectory;
                 while (!Directory.Exists(path + "\\Resources"))
                 {
                     path = new DirectoryInfo(path + "\\..").FullName;
                 }
                 object obj = Image.FromFile(path + "\\Resources\\Test1.jpg");
-#else
-                object obj = ResourceManager.GetObject("Test1", resourceCulture);
-#endif
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

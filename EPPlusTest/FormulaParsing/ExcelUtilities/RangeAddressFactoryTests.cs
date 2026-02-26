@@ -23,10 +23,10 @@ namespace EPPlusTest.ExcelUtilities
             _factory = new RangeAddressFactory(provider);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
         public void CreateShouldThrowIfSuppliedAddressIsNull()
         {
-            _factory.Create(null);
+            Assert.Throws<ArgumentException>(() => _factory.Create(null));
         }
 
         [TestMethod]

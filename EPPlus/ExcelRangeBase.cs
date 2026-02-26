@@ -2450,11 +2450,7 @@ namespace OfficeOpenXml
         {
             if (string.IsNullOrEmpty(Author))
             {
-#if Core
-                Author = System.Security.Claims.ClaimsPrincipal.Current.Identity.Name;
-#else
-                Author = Thread.CurrentPrincipal.Identity.Name;
-#endif
+                Author = Thread.CurrentPrincipal?.Identity?.Name ?? "";
             }
             //Check if any comments exists in the range and throw an exception
             _changePropMethod(this, _setExistsCommentDelegate, null);

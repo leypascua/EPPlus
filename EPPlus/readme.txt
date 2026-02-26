@@ -1,5 +1,7 @@
 # EPPlus 4.5.3.3
 
+This was forked from [JanKallman/EPPlus](https://github.com/JanKallman/EPPlus). Primary purpose: Allow EPPlus 4.5.3 to be used in modern .NET
+
 ## Announcement: This is the last version of EPPlus under the LGPL License
 EPPlus will from version 5 be licensed under the [Polyform Noncommercial 1.0.0]( https://polyformproject.org/licenses/noncommercial/1.0.0/) license.  
 With the new license EPPlus is still free to use in some cases, but will require a commercial license to be used in a commercial business.  

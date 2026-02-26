@@ -39,7 +39,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
 
     [Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d00004")]
     [Interop.ComVisible(true)]
-//#if !NETCF
 //    [Interop.ClassInterface(Interop.ClassInterfaceType.AutoDispatch)]  // AutoDual
 //#endif
     internal partial class ZipEntry
@@ -57,11 +56,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
             _CompressionLevel = Ionic.Zlib.CompressionLevel.Default;
             _Encryption = EncryptionAlgorithm.None;
             _Source = ZipEntrySource.None;
-#if (Core)
             AlternateEncoding = System.Text.Encoding.GetEncoding("UTF-8");
-#else
-            AlternateEncoding = System.Text.Encoding.GetEncoding("IBM437");
-#endif
             AlternateEncodingUsage = ZipOption.Never;
         }
 
@@ -2387,24 +2382,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     // when necessary: when saving the ZipFile, or when getting the
                     // attributes, and so on.
 
-#if NETCF
-                    // workitem 6878
-                    // Ionic.Zip.SharedUtilities.AdjustTime_Win32ToDotNet
-                    entry._Mtime = File.GetLastWriteTime(filename).ToUniversalTime();
-                    entry._Ctime = File.GetCreationTime(filename).ToUniversalTime();
-                    entry._Atime = File.GetLastAccessTime(filename).ToUniversalTime();
-
-                    // workitem 7071
-                    // can only get attributes of files that exist.
-                    if (File.Exists(filename) || Directory.Exists(filename))
-                        entry._ExternalFileAttrs = (int)NetCfFile.GetAttributes(filename);
-
-#elif SILVERLIGHT
-                    entry._Mtime =
-                        entry._Ctime =
-                        entry._Atime = System.DateTime.UtcNow;
-                    entry._ExternalFileAttrs = (int)0;
-#else
                     // workitem 6878??
                     entry._Mtime = File.GetLastWriteTime(filename).ToUniversalTime();
                     entry._Ctime = File.GetCreationTime(filename).ToUniversalTime();
@@ -2414,8 +2391,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
                     // can only get attributes on files that exist.
                     if (File.Exists(filename) || Directory.Exists(filename))
                         entry._ExternalFileAttrs = (int)File.GetAttributes(filename);
-
-#endif
                     entry._ntfsTimesAreSet = true;
 
                     entry._LocalFileName = Path.GetFullPath(filename); // workitem 8813
@@ -2721,11 +2696,7 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
         private bool _skippedDuringSave;
         private UInt32 _diskNumber;
 
-#if (Core)
         private static System.Text.Encoding ibm437 = System.Text.Encoding.GetEncoding("UTF-8");
-#else
-        private static System.Text.Encoding ibm437 = System.Text.Encoding.GetEncoding("IBM437");
-#endif
         private System.Text.Encoding _actualEncoding;
 
         internal ZipContainer _container;
@@ -2889,86 +2860,6 @@ namespace OfficeOpenXml.Packaging.Ionic.Zip
     }
 
 
-#if NETCF
-    internal class NetCfFile
-    {
-        public static int SetTimes(string filename, DateTime ctime, DateTime atime, DateTime mtime)
-        {
-            IntPtr hFile  = (IntPtr) CreateFileCE(filename,
-                                                  (uint)0x40000000L, // (uint)FileAccess.Write,
-                                                  (uint)0x00000002L, // (uint)FileShare.Write,
-                                                  0,
-                                                  (uint) 3,  // == open existing
-                                                  (uint)0, // flagsAndAttributes
-                                                  0);
-
-            if((int)hFile == -1)
-            {
-                // workitem 7944: don't throw on failure to set file times
-                // throw new ZipException("CreateFileCE Failed");
-                return Interop.Marshal.GetLastWin32Error();
-            }
-
-            SetFileTime(hFile,
-                        BitConverter.GetBytes(ctime.ToFileTime()),
-                        BitConverter.GetBytes(atime.ToFileTime()),
-                        BitConverter.GetBytes(mtime.ToFileTime()));
-
-            CloseHandle(hFile);
-            return 0;
-        }
-
-
-        public static int SetLastWriteTime(string filename, DateTime mtime)
-        {
-            IntPtr hFile  = (IntPtr) CreateFileCE(filename,
-                                                  (uint)0x40000000L, // (uint)FileAccess.Write,
-                                                  (uint)0x00000002L, // (uint)FileShare.Write,
-                                                  0,
-                                                  (uint) 3,  // == open existing
-                                                  (uint)0, // flagsAndAttributes
-                                                  0);
-
-            if((int)hFile == -1)
-            {
-                // workitem 7944: don't throw on failure to set file time
-                // throw new ZipException(String.Format("CreateFileCE Failed ({0})",
-                //                                      Interop.Marshal.GetLastWin32Error()));
-                return Interop.Marshal.GetLastWin32Error();
-            }
-
-            SetFileTime(hFile, null, null,
-                        BitConverter.GetBytes(mtime.ToFileTime()));
-
-            CloseHandle(hFile);
-            return 0;
-        }
-
-
-        [Interop.DllImport("coredll.dll", EntryPoint="CreateFile", SetLastError=true)]
-        internal static extern int CreateFileCE(string lpFileName,
-                                                uint dwDesiredAccess,
-                                                uint dwShareMode,
-                                                int lpSecurityAttributes,
-                                                uint dwCreationDisposition,
-                                                uint dwFlagsAndAttributes,
-                                                int hTemplateFile);
-
-
-        [Interop.DllImport("coredll", EntryPoint="GetFileAttributes", SetLastError=true)]
-        internal static extern uint GetAttributes(string lpFileName);
-
-        [Interop.DllImport("coredll", EntryPoint="SetFileAttributes", SetLastError=true)]
-        internal static extern bool SetAttributes(string lpFileName, uint dwFileAttributes);
-
-        [Interop.DllImport("coredll", EntryPoint="SetFileTime", SetLastError=true)]
-        internal static extern bool SetFileTime(IntPtr hFile, byte[] lpCreationTime, byte[] lpLastAccessTime, byte[] lpLastWriteTime);
-
-        [Interop.DllImport("coredll.dll", SetLastError=true)]
-        internal static extern bool CloseHandle(IntPtr hObject);
-
-    }
-#endif
 
 
 

@@ -24,10 +24,10 @@ namespace EPPlusTest.ExcelUtilities
             _addressTranslator = new AddressTranslator(_excelDataProvider);
         }
 
-        [TestMethod, ExpectedException(typeof(ArgumentNullException))]
+        [TestMethod]
         public void ConstructorShouldThrowIfProviderIsNull()
         {
-            new AddressTranslator(null);
+            Assert.Throws<ArgumentNullException>(() => new AddressTranslator(null));
         }
 
         [TestMethod]

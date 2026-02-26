@@ -35,12 +35,15 @@ namespace EPPlusTest.DataValidation
             Assert.AreEqual(ExcelDataValidationOperator.greaterThanOrEqual, validation.Operator);
        }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [TestMethod]
         public void DataValidations_ShouldThrowIfOperatorIsEqualAndFormula1IsEmpty()
         {
-            var validations = _sheet.DataValidations.AddIntegerValidation("A1");
-            validations.Operator = ExcelDataValidationOperator.equal;
-            validations.Validate();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var validations = _sheet.DataValidations.AddIntegerValidation("A1");
+                validations.Operator = ExcelDataValidationOperator.equal;
+                validations.Validate();
+            });
         }
 
         [TestMethod]
@@ -109,13 +112,16 @@ namespace EPPlusTest.DataValidation
             Assert.AreEqual("ErrorTitle", validation.ErrorTitle);
         }
 
-        [TestMethod, ExpectedException(typeof(InvalidOperationException))]
+        [TestMethod]
         public void DataValidations_ShouldThrowIfOperatorIsBetweenAndFormula2IsEmpty()
         {
-            var validation = _sheet.DataValidations.AddIntegerValidation("A1");
-            validation.Formula.Value = 1;
-            validation.Operator = ExcelDataValidationOperator.between;
-            validation.Validate();
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var validation = _sheet.DataValidations.AddIntegerValidation("A1");
+                validation.Formula.Value = 1;
+                validation.Operator = ExcelDataValidationOperator.between;
+                validation.Validate();
+            });
         }
 
         [TestMethod]
